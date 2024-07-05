@@ -15,15 +15,26 @@ public partial class ExpenseTrackerDbContext : DbContext
     {
     }
 
+
     public virtual DbSet<CreditCard> CreditCards { get; set; }
+
+    public virtual DbSet<EmailCopy> EmailCopies { get; set; }
 
     public virtual DbSet<Expense> Expenses { get; set; }
 
     public virtual DbSet<ExpenseCategory> ExpenseCategories { get; set; }
 
+    public virtual DbSet<ExpenseItem> ExpenseItems { get; set; }
+
     public virtual DbSet<ExpenseType> ExpenseTypes { get; set; }
 
     public virtual DbSet<Family> Families { get; set; }
+
+    public virtual DbSet<FamilyMemberRequest> FamilyMemberRequests { get; set; }
+
+    public virtual DbSet<UserBudget> UserBudgets { get; set; }
+
+    public virtual DbSet<UserIncome> UserIncomes { get; set; }
 
     public virtual DbSet<UserProfile> UserProfiles { get; set; }
 
@@ -42,6 +53,21 @@ public partial class ExpenseTrackerDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.CreditCards)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_CreditCard_UserProfile");
+        });
+
+        modelBuilder.Entity<EmailCopy>(entity =>
+        {
+            entity.HasKey(e => e.EmailCopyId).HasName("PK_EmailCopy_EmailCopyId");
+
+            entity.ToTable("EmailCopy");
+
+            entity.Property(e => e.EmailFrom)
+                .HasMaxLength(100)
+                .HasDefaultValue("learnsmartcoding@gmail.com");
+            entity.Property(e => e.EmailMessage).HasMaxLength(2000);
+            entity.Property(e => e.EmailSubject).HasMaxLength(100);
+            entity.Property(e => e.EmailTo).HasMaxLength(100);
+            entity.Property(e => e.SentDate).HasDefaultValueSql("(getdate())");
         });
 
         modelBuilder.Entity<Expense>(entity =>
@@ -81,6 +107,36 @@ public partial class ExpenseTrackerDbContext : DbContext
             entity.Property(e => e.ExpenseCategoryName).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<ExpenseItem>(entity =>
+        {
+            entity.HasKey(e => e.ExpenseItemId).HasName("PK_ExpenseItem_ExpenseId");
+
+            entity.ToTable("ExpenseItem");
+
+            entity.Property(e => e.ExpenseAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ExpenseDescription).HasMaxLength(500);
+
+            entity.HasOne(d => d.CreditCard).WithMany(p => p.ExpenseItems)
+                .HasForeignKey(d => d.CreditCardId)
+                .HasConstraintName("FK_ExpenseItem_CreditCard");
+
+            entity.HasOne(d => d.ExpenseCategory).WithMany(p => p.ExpenseItems)
+                .HasForeignKey(d => d.ExpenseCategoryId)
+                .HasConstraintName("FK_ExpenseItem_Category");
+
+            entity.HasOne(d => d.Expense).WithMany(p => p.ExpenseItems)
+                .HasForeignKey(d => d.ExpenseId)
+                .HasConstraintName("FK_ExpenseItem_Expense");
+
+            entity.HasOne(d => d.ExpenseType).WithMany(p => p.ExpenseItems)
+                .HasForeignKey(d => d.ExpenseTypeId)
+                .HasConstraintName("FK_ExpenseItem_Type");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ExpenseItems)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_ExpenseItem_User");
+        });
+
         modelBuilder.Entity<ExpenseType>(entity =>
         {
             entity.HasKey(e => e.ExpenseTypeId).HasName("PK_ExpenseType_ExpenseTypeId");
@@ -97,6 +153,51 @@ public partial class ExpenseTrackerDbContext : DbContext
             entity.ToTable("Family");
 
             entity.Property(e => e.FamilyName).HasMaxLength(100);
+        });
+
+        modelBuilder.Entity<FamilyMemberRequest>(entity =>
+        {
+            entity.HasKey(e => e.FamilyMemberRequestId).HasName("PK_FamilyMemberRequest_FamilyMemberRequestId");
+
+            entity.ToTable("FamilyMemberRequest");
+
+            entity.Property(e => e.FamilyEmailIds).HasMaxLength(100);
+            entity.Property(e => e.UserMessage).HasMaxLength(500);
+
+            entity.HasOne(d => d.RequestedUser).WithMany(p => p.FamilyMemberRequests)
+                .HasForeignKey(d => d.RequestedUserId)
+                .HasConstraintName("FK_FamilyMemberRequest_UserProfile");
+        });
+
+        modelBuilder.Entity<UserBudget>(entity =>
+        {
+            entity.HasKey(e => e.UserBudgetId).HasName("PK_UserBudget_UserBudgetId");
+
+            entity.ToTable("UserBudget");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.BudgetDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ItemDescription).HasMaxLength(500);
+            entity.Property(e => e.ItemName).HasMaxLength(100);
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserBudgets)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_UserBudget_UserProfile");
+        });
+
+        modelBuilder.Entity<UserIncome>(entity =>
+        {
+            entity.HasKey(e => e.UserIncomeId).HasName("PK_UserIncome_UserIncomeId");
+
+            entity.ToTable("UserIncome");
+
+            entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.IncomeDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.IncomeDescription).HasMaxLength(500);
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserIncomes)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_UserIncome_UserProfile");
         });
 
         modelBuilder.Entity<UserProfile>(entity =>
@@ -122,6 +223,5 @@ public partial class ExpenseTrackerDbContext : DbContext
 
         OnModelCreatingPartial(modelBuilder);
     }
-
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

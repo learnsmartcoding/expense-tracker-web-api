@@ -9,5 +9,7 @@ public partial class ExpenseCategory
 
     public string ExpenseCategoryName { get; set; } = null!;
 
+    public virtual ICollection<ExpenseItem> ExpenseItems { get; set; } = new List<ExpenseItem>();
+
     public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 }

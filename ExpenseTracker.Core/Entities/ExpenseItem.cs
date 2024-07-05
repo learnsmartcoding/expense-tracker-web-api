@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace ExpenseTracker.Core.Entities;
 
-public partial class Expense
+public partial class ExpenseItem
 {
-    public int ExpenseId { get; set; }
+    public int ExpenseItemId { get; set; }
+
+    public int? ExpenseId { get; set; }
 
     public int? UserId { get; set; }
 
@@ -23,9 +25,9 @@ public partial class Expense
 
     public virtual CreditCard? CreditCard { get; set; }
 
-    public virtual ExpenseCategory? ExpenseCategory { get; set; }
+    public virtual Expense? Expense { get; set; }
 
-    public virtual ICollection<ExpenseItem> ExpenseItems { get; set; } = new List<ExpenseItem>();
+    public virtual ExpenseCategory? ExpenseCategory { get; set; }
 
     public virtual ExpenseType? ExpenseType { get; set; }
 

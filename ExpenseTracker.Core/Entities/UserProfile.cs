@@ -21,7 +21,15 @@ public partial class UserProfile
 
     public virtual ICollection<CreditCard> CreditCards { get; set; } = new List<CreditCard>();
 
+    public virtual ICollection<ExpenseItem> ExpenseItems { get; set; } = new List<ExpenseItem>();
+
     public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 
     public virtual Family? Family { get; set; }
+
+    public virtual ICollection<FamilyMemberRequest> FamilyMemberRequests { get; set; } = new List<FamilyMemberRequest>();
+
+    public virtual ICollection<UserBudget> UserBudgets { get; set; } = new List<UserBudget>();
+
+    public virtual ICollection<UserIncome> UserIncomes { get; set; } = new List<UserIncome>();
 }

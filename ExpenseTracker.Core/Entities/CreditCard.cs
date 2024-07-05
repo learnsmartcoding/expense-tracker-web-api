@@ -13,6 +13,8 @@ public partial class CreditCard
 
     public int? UserId { get; set; }
 
+    public virtual ICollection<ExpenseItem> ExpenseItems { get; set; } = new List<ExpenseItem>();
+
     public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
 
     public virtual UserProfile? User { get; set; }
