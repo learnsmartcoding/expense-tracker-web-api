@@ -4,10 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>5f2e01fe-0109-4635-b8b4-ff8987a7bc61</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
+	  <PackageReference Include="AutoMapper" Version="13.0.1" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
@@ -22,6 +26,7 @@
 
 	  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
 	  <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="7.0.9" />
+	  <PackageReference Include="Microsoft.Identity.Web" Version="1.25.1" />
   </ItemGroup>
 
   <ItemGroup>

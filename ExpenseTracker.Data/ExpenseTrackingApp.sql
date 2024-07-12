@@ -21,6 +21,8 @@ GO
 USE ExpenseTracker;
 GO
 
+
+
 -- Family Table
 CREATE TABLE Family (
     FamilyId INT IDENTITY(1,1),
@@ -79,6 +81,74 @@ CREATE TABLE Expense (
     CONSTRAINT PK_Expense_ExpenseId PRIMARY KEY (ExpenseId)
 );
 
+
+-- Expense Table
+CREATE TABLE ExpenseItem (
+    ExpenseItemId INT IDENTITY(1,1),
+	ExpenseId INT,
+    UserId INT,
+    ExpenseAmount DECIMAL(18, 2) NOT NULL,
+    ExpenseCategoryId INT,
+    ExpenseTypeId INT,
+    CreditCardId INT NULL,
+    ExpenseDescription NVARCHAR(500) NOT NULL, --have to give details of this purchase
+    ExpenseDate DATETIME2 NOT NULL,
+    CONSTRAINT PK_ExpenseItem_ExpenseId PRIMARY KEY (ExpenseItemId),
+	CONSTRAINT FK_ExpenseItem_Expense FOREIGN KEY (ExpenseId) REFERENCES Expense(ExpenseId),
+	CONSTRAINT FK_ExpenseItem_User FOREIGN KEY (UserId) REFERENCES UserProfile(UserId),
+    CONSTRAINT FK_ExpenseItem_Category FOREIGN KEY (ExpenseCategoryId) REFERENCES ExpenseCategory(ExpenseCategoryId),
+    CONSTRAINT FK_ExpenseItem_Type FOREIGN KEY (ExpenseTypeId) REFERENCES ExpenseType(ExpenseTypeId),
+    CONSTRAINT FK_ExpenseItem_CreditCard FOREIGN KEY (CreditCardId) REFERENCES CreditCard(CreditCardId)
+);
+
+
+CREATE TABLE UserBudget (
+    UserBudgetId INT IDENTITY(1,1),
+    UserId INT,
+    Amount DECIMAL(18, 2) NOT NULL, 
+	ItemName NVARCHAR(100) NOT NULL, -- e.g. rent, car insurance, mobile bill, internet, grocery, etc
+	ItemDescription NVARCHAR(500) NOT NULL,
+	BudgetDate DATETIME2 NOT NULL CONSTRAINT DF_UserBudget_BudgetDate DEFAULT GETDATE(),
+	RepeatEveryMonth BIT, -- based on this flag, we will auto populate consucutive months. this logic is based on current month value.
+    CONSTRAINT PK_UserBudget_UserBudgetId PRIMARY KEY (UserBudgetId),	
+    CONSTRAINT FK_UserBudget_UserProfile FOREIGN KEY (UserId) REFERENCES UserProfile(UserId)
+);
+
+CREATE TABLE UserIncome (
+    UserIncomeId INT IDENTITY(1,1),
+    UserId INT,
+    Amount DECIMAL(18, 2) NOT NULL, 	
+	IncomeDescription NVARCHAR(500) NOT NULL,
+	IncomeDate DATETIME2 NOT NULL CONSTRAINT DF_UserBudget_IncomeDate DEFAULT GETDATE(),
+	RepeatEveryMonth BIT, -- based on this flag, we will auto populate consucutive months. this logic is based on current month value.
+    CONSTRAINT PK_UserIncome_UserIncomeId PRIMARY KEY (UserIncomeId),	
+    CONSTRAINT FK_UserIncome_UserProfile FOREIGN KEY (UserId) REFERENCES UserProfile(UserId)
+);
+
+
+--Family merge request
+CREATE TABLE FamilyMemberRequest (
+    FamilyMemberRequestId INT IDENTITY(1,1),
+	RequestedUserId INT,
+	UserMessage NVARCHAR(500) NOT NULL,
+    FamilyEmailIds NVARCHAR(100) NOT NULL, -- Initially expected to get only one email id in a request. 
+	IsEmailSent BIT,
+	IsProcessed BIT,
+    CONSTRAINT PK_FamilyMemberRequest_FamilyMemberRequestId PRIMARY KEY (FamilyMemberRequestId),
+	CONSTRAINT FK_FamilyMemberRequest_UserProfile FOREIGN KEY (RequestedUserId) REFERENCES UserProfile(UserId)
+);
+
+CREATE TABLE EmailCopy (
+    EmailCopyId INT IDENTITY(1,1),
+    EmailFrom NVARCHAR(100) NOT NULL CONSTRAINT DF_EmailCopy_EmailFrom DEFAULT 'learnsmartcoding@gmail.com',
+	EmailTo NVARCHAR(100) NOT NULL, -- we can join this with userprofile table to see what email user received.
+    EmailSubject NVARCHAR(100) NOT NULL, 	
+	EmailMessage NVARCHAR(2000) NOT NULL, 		
+	SentDate DATETIME2 NOT NULL CONSTRAINT DF_EmailCopy_SentDate DEFAULT GETDATE(),	
+    CONSTRAINT PK_EmailCopy_EmailCopyId PRIMARY KEY (EmailCopyId)    
+);
+
+
 -- Foreign Key Constraints for Expense Table
 ALTER TABLE Expense
 ADD CONSTRAINT FK_Expense_User FOREIGN KEY (UserId) REFERENCES UserProfile(UserId),
@@ -118,5 +188,19 @@ INSERT INTO ExpenseCategory (ExpenseCategoryName) VALUES
 ('Subscriptions'),
 ('Childcare'),
 ('Pets'),
-('Miscellaneous');
+('Miscellaneous'),
+('Purchase'),
+('Shopping'),
+('Fuel'),
+('Misc');
 
+
+--insert into [dbo].[CreditCard] (cardLastFourDigit, CreditCardName, UserID)
+--values ('4545','chase',4)
+
+--insert into [dbo].[CreditCard] (cardLastFourDigit, CreditCardName, UserID)
+--values ('8544','bofa',1)
+--insert into [dbo].[CreditCard] (cardLastFourDigit, CreditCardName, UserID)
+--values ('8900','chase',2)
+--insert into [dbo].[CreditCard] (cardLastFourDigit, CreditCardName, UserID)
+--values ('0575','chase',3)
