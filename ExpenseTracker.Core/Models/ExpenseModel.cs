@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExpenseTracker.Core.Models
 {
-    public class ExpenseModel
+    public class ExpenseBaseModel
     {
         public int ExpenseId { get; set; }
 
@@ -25,6 +25,17 @@ namespace ExpenseTracker.Core.Models
 
         public DateTime ExpenseDate { get; set; }
     }
+    public class ExpenseModel: ExpenseBaseModel
+    {
+        public List<ExpenseItemModel> ExpenseItemsModel { get; set; } = new List<ExpenseItemModel>();
+
+    }
+    public class ExpenseItemModel : ExpenseBaseModel
+    {
+        public int ExpenseItemId { get; set; }
+    }
+
+
     public partial class ExpenseTypeModel
     {
         public int ExpenseTypeId { get; set; }
@@ -46,5 +57,6 @@ namespace ExpenseTracker.Core.Models
         public string CardLastFourDigit { get; set; } = null!;
 
         public string CreditCardName { get; set; } = null!;
+        public int UserId { get; set; }
     }
 }

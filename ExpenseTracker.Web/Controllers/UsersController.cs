@@ -1,12 +1,15 @@
 ﻿using ExpenseTracker.Core.Models;
 using ExpenseTracker.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Web.Resource;
 
 namespace ExpenseTracker.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    //[Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -17,6 +20,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("{id}")]
+        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
         public async Task<ActionResult<UserProfileModel>> GetUserById(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -28,6 +32,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("family/{familyId}")]
+        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
         public async Task<ActionResult<IEnumerable<UserProfileModel>>> GetUsersByFamilyId(int familyId)
         {
             var users = await _userService.GetUsersByFamilyIdAsync(familyId);
@@ -35,6 +40,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpPost]
+        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
         public async Task<ActionResult> AddUser(UserProfileModel userModel)
         {
             await _userService.AddUserAsync(userModel);
@@ -42,6 +48,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpPut("{id}")]
+        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
         public async Task<ActionResult> UpdateUser(int id, UserProfileModel userModel)
         {
             if (id != userModel.UserId)
@@ -54,6 +61,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpDelete("{id}")]
+        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
         public async Task<ActionResult> DeleteUser(int id)
         {
             await _userService.DeleteUserAsync(id);

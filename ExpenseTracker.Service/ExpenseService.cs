@@ -96,7 +96,20 @@ namespace ExpenseTracker.Service
                 ExpenseTypeId = expense.ExpenseTypeId,
                 CreditCardId = expense.CreditCardId,
                 ExpenseDescription = expense.ExpenseDescription,
-                ExpenseDate = expense.ExpenseDate
+                ExpenseDate = expense.ExpenseDate,
+                ExpenseItemsModel = expense.ExpenseItems.Select(s => new ExpenseItemModel()
+                {
+                    ExpenseId = s.ExpenseId ?? 0,
+                    ExpenseItemId = s.ExpenseItemId,
+                    UserId = s.UserId,
+                    ExpenseAmount = s.ExpenseAmount,
+                    ExpenseCategoryId = s.ExpenseCategoryId,
+                    ExpenseTypeId = s.ExpenseTypeId,
+                    CreditCardId = s.CreditCardId,
+                    ExpenseDescription = s.ExpenseDescription,
+                    ExpenseDate = s.ExpenseDate,
+
+                }).ToList()
             };
         }
 
@@ -106,12 +119,25 @@ namespace ExpenseTracker.Service
             {
                 ExpenseId = expenseModel.ExpenseId,
                 UserId = expenseModel.UserId,
-                ExpenseAmount = expenseModel.ExpenseAmount,
+                ExpenseAmount = expenseModel.ExpenseItemsModel.Any() ? 
+                expenseModel.ExpenseItemsModel.Sum(s => s.ExpenseAmount) : expenseModel.ExpenseAmount,
                 ExpenseCategoryId = expenseModel.ExpenseCategoryId,
                 ExpenseTypeId = expenseModel.ExpenseTypeId,
                 CreditCardId = expenseModel.CreditCardId,
                 ExpenseDescription = expenseModel.ExpenseDescription,
-                ExpenseDate = expenseModel.ExpenseDate
+                ExpenseDate = expenseModel.ExpenseDate,
+                ExpenseItems = expenseModel.ExpenseItemsModel.Select(s => new ExpenseItem()
+                {
+                    ExpenseId = s.ExpenseId,
+                    ExpenseItemId = s.ExpenseItemId,
+                    UserId = s.UserId,
+                    ExpenseAmount = s.ExpenseAmount,
+                    ExpenseCategoryId = s.ExpenseCategoryId,
+                    ExpenseTypeId = s.ExpenseTypeId,
+                    CreditCardId = s.CreditCardId,
+                    ExpenseDescription = s.ExpenseDescription,
+                    ExpenseDate = s.ExpenseDate
+                }).ToList()
             };
         }
 
