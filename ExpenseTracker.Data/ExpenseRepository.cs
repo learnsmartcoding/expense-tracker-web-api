@@ -1,10 +1,5 @@
 ﻿using ExpenseTracker.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExpenseTracker.Data
 {
@@ -20,24 +15,30 @@ namespace ExpenseTracker.Data
         // Expense related methods
         public async Task<Expense> GetExpenseByIdAsync(int expenseId)
         {
+
             return await _context.Expenses
-                .Include(i => i.ExpenseItems)
-                .Where(w => w.ExpenseId == expenseId 
-                && w.ExpenseDate.Month == DateTime.UtcNow.Month && w.ExpenseDate.Year == DateTime.UtcNow.Year
-                )
-                .FirstOrDefaultAsync();
+                 .Include(i => i.ExpenseItems)
+                 .Where(w => w.ExpenseId == expenseId)
+                 .FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(int userId)
+        public async Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(int userId, int month = 0, int year = 0)
         {
+            month = month == 0 ? DateTime.UtcNow.Month : month;
+            year = year == 0 ? DateTime.UtcNow.Year : year;
+
             return await _context.Expenses
                 .Include(i => i.ExpenseItems)
-                .Where(e => e.UserId == userId && e.ExpenseDate.Month == DateTime.UtcNow.Month && e.ExpenseDate.Year == DateTime.UtcNow.Year)
+                .Where(e => e.UserId == userId && e.ExpenseDate.Month == month && 
+                e.ExpenseDate.Year == year)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Expense>> GetExpensesByFamilyIdAsync(int familyId)
+        public async Task<IEnumerable<Expense>> GetExpensesByFamilyIdAsync(int familyId, int month = 0, int year = 0)
         {
+            month = month == 0 ? DateTime.UtcNow.Month : month;
+            year = year == 0 ? DateTime.UtcNow.Year : year;
+
             var userIds = await _context.UserProfiles
                 .Where(u => u.FamilyId == familyId)
                 .Select(u => u.UserId)
@@ -45,7 +46,8 @@ namespace ExpenseTracker.Data
 
             return await _context.Expenses
                 .Include(i => i.ExpenseItems)
-                .Where(e => userIds.Contains(e.UserId ?? 0) && e.ExpenseDate.Month == DateTime.UtcNow.Month && e.ExpenseDate.Year == DateTime.UtcNow.Year)
+                .Where(e => userIds.Contains(e.UserId ?? 0) && e.ExpenseDate.Month == month 
+                && e.ExpenseDate.Year == year)
                 .ToListAsync();
         }
 
@@ -63,8 +65,8 @@ namespace ExpenseTracker.Data
 
         public async Task DeleteExpenseAsync(int expenseId)
         {
-            //var expense = await _context.Expenses.FindAsync(expenseId);
-            var expense = await GetExpenseByIdAsync(expenseId);//this will delete its child entry as well
+            var expense = await _context.Expenses.FindAsync(expenseId);
+            //var expense = await GetExpenseByIdAsync(expenseId);//this will delete its child entry as well
             if (expense != null)
             {
                 //if you dont use this, then the child items expenseid will be set null based on foreign key concepts

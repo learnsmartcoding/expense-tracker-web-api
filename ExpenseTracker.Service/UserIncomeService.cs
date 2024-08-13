@@ -12,7 +12,7 @@ namespace ExpenseTracker.Service
 {
     public interface IUserIncomeService
     {
-        Task<IEnumerable<UserIncomeModel>> GetUserIncomesByUserIdAsync(int userId);
+        Task<IEnumerable<UserIncomeModel>> GetUserIncomesByUserIdAsync(int userId, int month = 0, int year = 0);
         Task<UserIncomeModel> GetUserIncomeByIdAsync(int userIncomeId);
         Task AddUserIncomeAsync(UserIncomeModel userIncome);
         Task UpdateUserIncomeAsync(UserIncomeModel userIncome);
@@ -30,9 +30,9 @@ namespace ExpenseTracker.Service
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<UserIncomeModel>> GetUserIncomesByUserIdAsync(int userId)
+        public async Task<IEnumerable<UserIncomeModel>> GetUserIncomesByUserIdAsync(int userId, int month = 0, int year = 0)
         {
-            var userIncomes = await _userIncomeRepository.GetUserIncomesByUserIdAsync(userId);
+            var userIncomes = await _userIncomeRepository.GetUserIncomesByUserIdAsync(userId,month,year);
             return _mapper.Map<IEnumerable<UserIncomeModel>>(userIncomes);
         }
 

@@ -10,7 +10,7 @@ namespace ExpenseTracker.Data
 {
     public interface IUserIncomeRepository
     {
-        Task<IEnumerable<UserIncome>> GetUserIncomesByUserIdAsync(int userId);
+        Task<IEnumerable<UserIncome>> GetUserIncomesByUserIdAsync(int userId, int month = 0, int year = 0);
         Task<UserIncome> GetUserIncomeByIdAsync(int userIncomeId);
         Task AddUserIncomeAsync(UserIncome userIncome);
         Task UpdateUserIncomeAsync(UserIncome userIncome);
@@ -26,11 +26,14 @@ namespace ExpenseTracker.Data
             _context = context;
         }
 
-        public async Task<IEnumerable<UserIncome>> GetUserIncomesByUserIdAsync(int userId)
+        public async Task<IEnumerable<UserIncome>> GetUserIncomesByUserIdAsync(int userId, int month = 0, int year = 0)
         {
+            month = month == 0 ? DateTime.UtcNow.Month : month;
+            year = year == 0 ? DateTime.UtcNow.Year : year;
+
             return await _context.UserIncomes
                 .Where(ui => ui.UserId == userId
-                && ui.IncomeDate.Month == DateTime.UtcNow.Month && ui.IncomeDate.Year == DateTime.UtcNow.Year)
+                && ui.IncomeDate.Month == month && ui.IncomeDate.Year == year)
                 .ToListAsync();
         }
 

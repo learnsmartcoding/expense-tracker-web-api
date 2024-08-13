@@ -9,7 +9,7 @@ namespace ExpenseTracker.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class ExpensesController : ControllerBase
     {
         private readonly IExpenseService _expenseService;
@@ -20,7 +20,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("{id}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<ExpenseModel>> GetExpenseById(int id)
         {
             var expense = await _expenseService.GetExpenseByIdAsync(id);
@@ -32,23 +32,23 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("user/{userId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
-        public async Task<ActionResult<IEnumerable<ExpenseModel>>> GetExpensesByUserId(int userId)
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
+        public async Task<ActionResult<IEnumerable<ExpenseModel>>> GetExpensesByUserId(int userId, int month = 0, int year = 0)
         {
-            var expenses = await _expenseService.GetExpensesByUserIdAsync(userId);
+            var expenses = await _expenseService.GetExpensesByUserIdAsync(userId, month, year);
             return Ok(expenses);
         }
 
         [HttpGet("family/{familyId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
-        public async Task<ActionResult<IEnumerable<ExpenseModel>>> GetExpensesByFamilyId(int familyId)
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
+        public async Task<ActionResult<IEnumerable<ExpenseModel>>> GetExpensesByFamilyId(int familyId, int month = 0, int year = 0)
         {
-            var expenses = await _expenseService.GetExpensesByFamilyIdAsync(familyId);
+            var expenses = await _expenseService.GetExpensesByFamilyIdAsync(familyId,month, year);
             return Ok(expenses);
         }
 
         [HttpPost]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<ActionResult> AddExpense(ExpenseModel expenseModel)
         {
             expenseModel.ExpenseItemsModel = expenseModel.ExpenseItemsModel ?? new List<ExpenseItemModel>();
@@ -58,7 +58,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpPut("{id}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<ActionResult> UpdateExpense(int id, ExpenseModel expenseModel)
         {
             if (id != expenseModel.ExpenseId)
@@ -73,7 +73,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpDelete("{id}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<ActionResult> DeleteExpense(int id)
         {
             await _expenseService.DeleteExpenseAsync(id);
@@ -81,7 +81,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("types")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<IEnumerable<ExpenseTypeModel>>> GetAllExpenseTypes()
         {
             var expenseTypes = await _expenseService.GetAllExpenseTypesAsync();
@@ -89,7 +89,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("categories")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<IEnumerable<ExpenseCategoryModel>>> GetAllExpenseCategories()
         {
             var expenseCategories = await _expenseService.GetAllExpenseCategoriesAsync();
@@ -97,7 +97,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("creditcards")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<IEnumerable<CreditCardModel>>> GetAllCreditCards()
         {
             var creditCards = await _expenseService.GetAllCreditCardsAsync();

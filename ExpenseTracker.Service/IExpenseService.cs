@@ -10,9 +10,9 @@ namespace ExpenseTracker.Service
 {
     public interface IExpenseService
     {
-        Task<ExpenseModel> GetExpenseByIdAsync(int expenseId);
-        Task<IEnumerable<ExpenseModel>> GetExpensesByUserIdAsync(int userId);
-        Task<IEnumerable<ExpenseModel>> GetExpensesByFamilyIdAsync(int familyId);
+        Task<ExpenseModel> GetExpenseByIdAsync(int expenseId, int month = 0, int year = 0);
+        Task<IEnumerable<ExpenseModel>> GetExpensesByUserIdAsync(int userId, int month = 0, int year = 0);
+        Task<IEnumerable<ExpenseModel>> GetExpensesByFamilyIdAsync(int familyId, int month = 0, int year = 0);
         Task AddExpenseAsync(ExpenseModel expense);
         Task UpdateExpenseAsync(ExpenseModel expense);
         Task DeleteExpenseAsync(int expenseId);

@@ -12,7 +12,7 @@ namespace ExpenseTracker.Service
 {
     public interface IUserBudgetService
     {
-        Task<IEnumerable<UserBudgetModel>> GetUserBudgetsByUserIdAsync(int userId);
+        Task<IEnumerable<UserBudgetModel>> GetUserBudgetsByUserIdAsync(int userId, int month = 0, int year = 0);
         Task<UserBudgetModel> GetUserBudgetByIdAsync(int userBudgetId);
         Task AddUserBudgetAsync(UserBudgetModel userBudget);
         Task UpdateUserBudgetAsync(UserBudgetModel userBudget);
@@ -30,9 +30,9 @@ namespace ExpenseTracker.Service
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<UserBudgetModel>> GetUserBudgetsByUserIdAsync(int userId)
+        public async Task<IEnumerable<UserBudgetModel>> GetUserBudgetsByUserIdAsync(int userId, int month = 0, int year = 0)
         {
-            var userBudgets = await _userBudgetRepository.GetUserBudgetsByUserIdAsync(userId);
+            var userBudgets = await _userBudgetRepository.GetUserBudgetsByUserIdAsync(userId,month, year);
             return _mapper.Map<IEnumerable<UserBudgetModel>>(userBudgets);
         }
 

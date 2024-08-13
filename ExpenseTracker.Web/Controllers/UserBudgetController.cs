@@ -9,7 +9,7 @@ namespace ExpenseTracker.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class UserBudgetController : ControllerBase
     {
         private readonly IUserBudgetService _userBudgetService;
@@ -20,15 +20,15 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("{userId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
-        public async Task<ActionResult<IEnumerable<UserBudgetModel>>> GetUserBudgetsByUserId(int userId)
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
+        public async Task<ActionResult<IEnumerable<UserBudgetModel>>> GetUserBudgetsByUserId(int userId, int month = 0, int year = 0)
         {
-            var userBudgets = await _userBudgetService.GetUserBudgetsByUserIdAsync(userId);
+            var userBudgets = await _userBudgetService.GetUserBudgetsByUserIdAsync(userId,month, year);
             return Ok(userBudgets);
         }
 
         [HttpGet("{userId}/{userBudgetId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<UserBudgetModel>> GetUserBudgetById(int userId, int userBudgetId)
         {
             var userBudget = await _userBudgetService.GetUserBudgetByIdAsync(userBudgetId);
@@ -40,7 +40,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpPost]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<ActionResult<UserBudgetModel>> AddUserBudget(UserBudgetModel userBudget)
         {
             await _userBudgetService.AddUserBudgetAsync(userBudget);
@@ -48,7 +48,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpPut("{userBudgetId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<IActionResult> UpdateUserBudget(int userBudgetId, UserBudgetModel userBudget)
         {
             if (userBudgetId != userBudget.UserBudgetId)
@@ -61,7 +61,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpDelete("{userBudgetId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<IActionResult> DeleteUserBudget(int userBudgetId)
         {
             await _userBudgetService.DeleteUserBudgetAsync(userBudgetId);

@@ -21,25 +21,25 @@ namespace ExpenseTracker.Service
         }
 
         // Expense related methods
-        public async Task<ExpenseModel> GetExpenseByIdAsync(int expenseId)
+        public async Task<ExpenseModel> GetExpenseByIdAsync(int expenseId, int month = 0, int year = 0)
         {
             var expense = await _expenseRepository.GetExpenseByIdAsync(expenseId);
             return expense != null ? MapToExpenseModel(expense) : null;
         }
 
-        public async Task<IEnumerable<ExpenseModel>> GetExpensesByUserIdAsync(int userId)
+        public async Task<IEnumerable<ExpenseModel>> GetExpensesByUserIdAsync(int userId, int month = 0, int year = 0)
         {
-            var expenses = await _expenseRepository.GetExpensesByUserIdAsync(userId);
+            var expenses = await _expenseRepository.GetExpensesByUserIdAsync(userId,month, year);
             return expenses.Select(MapToExpenseModel).ToList();
         }
 
-        public async Task<IEnumerable<ExpenseModel>> GetExpensesByFamilyIdAsync(int familyId)
+        public async Task<IEnumerable<ExpenseModel>> GetExpensesByFamilyIdAsync(int familyId, int month = 0, int year = 0)
         {
             var userIds = await _userRepository.GetUsersByFamilyIdAsync(familyId);
             var expenses = new List<Expense>();
             foreach (var userId in userIds.Select(u => u.UserId))
             {
-                var userExpenses = await _expenseRepository.GetExpensesByUserIdAsync(userId);
+                var userExpenses = await _expenseRepository.GetExpensesByUserIdAsync(userId, month, year);
                 expenses.AddRange(userExpenses);
             }
             return expenses.Select(MapToExpenseModel).ToList();

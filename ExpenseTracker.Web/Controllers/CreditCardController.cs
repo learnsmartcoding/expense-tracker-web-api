@@ -8,7 +8,7 @@ namespace ExpenseTracker.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class CreditCardController : ControllerBase
     {
         private readonly ICreditCardService _creditCardService;
@@ -21,7 +21,7 @@ namespace ExpenseTracker.Web.Controllers
         [HttpGet("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CreditCardModel>))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<IEnumerable<CreditCardModel>>> GetCreditCardsByUserId(int userId)
         {
             var creditCards = await _creditCardService.GetCreditCardsByUserIdAsync(userId);
@@ -31,7 +31,7 @@ namespace ExpenseTracker.Web.Controllers
         [HttpGet("{userId}/{creditCardId}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CreditCardModel))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<CreditCardModel>> GetCreditCardById(int userId, int creditCardId)
         {
             var creditCard = await _creditCardService.GetCreditCardByIdAsync(creditCardId);
@@ -45,7 +45,7 @@ namespace ExpenseTracker.Web.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreditCardModel))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<ActionResult<CreditCardModel>> AddCreditCard(CreditCardModel creditCard)
         {
             await _creditCardService.AddCreditCardAsync(creditCard);
@@ -55,7 +55,7 @@ namespace ExpenseTracker.Web.Controllers
         [HttpPut("{creditCardId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<IActionResult> UpdateCreditCard(int creditCardId, CreditCardModel creditCard)
         {
             if (creditCardId != creditCard.CreditCardId)
@@ -70,7 +70,7 @@ namespace ExpenseTracker.Web.Controllers
         [HttpDelete("{creditCardId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<IActionResult> DeleteCreditCard(int creditCardId)
         {
             await _creditCardService.DeleteCreditCardAsync(creditCardId);

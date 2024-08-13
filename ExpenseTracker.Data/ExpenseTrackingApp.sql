@@ -192,7 +192,9 @@ INSERT INTO ExpenseCategory (ExpenseCategoryName) VALUES
 ('Purchase'),
 ('Shopping'),
 ('Fuel'),
-('Misc');
+('Misc'),
+('Health & wellness'),
+('Food & drink');
 
 
 --insert into [dbo].[CreditCard] (cardLastFourDigit, CreditCardName, UserID)

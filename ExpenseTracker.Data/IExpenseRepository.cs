@@ -10,8 +10,8 @@ namespace ExpenseTracker.Data
     public interface IExpenseRepository
     {
         Task<Expense> GetExpenseByIdAsync(int expenseId);
-        Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(int userId);
-        Task<IEnumerable<Expense>> GetExpensesByFamilyIdAsync(int familyId);
+        Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(int userId, int month = 0, int year = 0);
+        Task<IEnumerable<Expense>> GetExpensesByFamilyIdAsync(int familyId, int month = 0, int year = 0);
         Task AddExpenseAsync(Expense expense);
         Task UpdateExpenseAsync(Expense expense);
         Task DeleteExpenseAsync(int expenseId);

@@ -9,7 +9,7 @@ namespace ExpenseTracker.Web.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class FamilyMemberRequestController : ControllerBase
     {
         private readonly IFamilyMemberRequestService _familyMemberRequestService;
@@ -20,7 +20,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("{userId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<IEnumerable<FamilyMemberRequestModel>>> GetFamilyMemberRequestsByUserId(int userId)
         {
             var familyMemberRequests = await _familyMemberRequestService.GetFamilyMemberRequestsByUserIdAsync(userId);
@@ -28,7 +28,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpGet("{userId}/{familyMemberRequestId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Read")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Read")]
         public async Task<ActionResult<FamilyMemberRequestModel>> GetFamilyMemberRequestById(int userId, int familyMemberRequestId)
         {
             var familyMemberRequest = await _familyMemberRequestService.GetFamilyMemberRequestByIdAsync(familyMemberRequestId);
@@ -40,7 +40,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpPost]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<ActionResult<FamilyMemberRequestModel>> AddFamilyMemberRequest(FamilyMemberRequestModel familyMemberRequest)
         {
             await _familyMemberRequestService.AddFamilyMemberRequestAsync(familyMemberRequest);
@@ -48,7 +48,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpPut("{familyMemberRequestId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<IActionResult> UpdateFamilyMemberRequest(int familyMemberRequestId, FamilyMemberRequestModel familyMemberRequest)
         {
             if (familyMemberRequestId != familyMemberRequest.FamilyMemberRequestId)
@@ -61,7 +61,7 @@ namespace ExpenseTracker.Web.Controllers
         }
 
         [HttpDelete("{familyMemberRequestId}")]
-        //[RequiredScope(RequiredScopesConfigurationKey = "AzureAdB2C:Scopes:Write")]
+        [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes:Write")]
         public async Task<IActionResult> DeleteFamilyMemberRequest(int familyMemberRequestId)
         {
             await _familyMemberRequestService.DeleteFamilyMemberRequestAsync(familyMemberRequestId);
