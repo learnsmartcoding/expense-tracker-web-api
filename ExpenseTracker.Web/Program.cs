@@ -70,28 +70,39 @@ namespace ExpenseTracker
                             configuration.Bind("AzureAd", options);
                             options.Events = new JwtBearerEvents();
 
-                            /// <summary>
-                            /// Below you can do extended token validation and check for additional claims, such as:
-                            ///
-                            /// - check if the caller's account is homed or guest via the 'acct' optional claim
-                            /// - check if the caller belongs to right roles or groups via the 'roles' or 'groups' claim, respectively
-                            ///
-                            /// Bear in mind that you can do any of the above checks within the individual routes and/or controllers as well.
-                            /// For more information, visit: https://docs.microsoft.com/azure/active-directory/develop/access-tokens#validate-the-user-has-permission-to-access-this-data
-                            /// </summary>
+                            options.Events = new JwtBearerEvents
+                            {
+                                OnTokenValidated = context =>
+                                {
+                                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
 
-                            //options.Events.OnTokenValidated = async context =>
-                            //{
-                            //    string[] allowedClientApps = { /* list of client ids to allow */ };
+                                    // Access the scope claim (scp) directly
+                                    var scopeClaim = context.Principal?.Claims.FirstOrDefault(c => c.Type == "scp")?.Value;
 
-                            //    string clientAppId = context?.Principal?.Claims
-                            //        .FirstOrDefault(x => x.Type == "azp" || x.Type == "appid")?.Value;
+                                    if (scopeClaim != null)
+                                    {
+                                        logger.LogInformation("Scope found in token: {Scope}", scopeClaim);
+                                    }
+                                    else
+                                    {
+                                        logger.LogWarning("Scope claim not found in token.");
+                                    }
 
-                            //    if (!allowedClientApps.Contains(clientAppId))
-                            //    {
-                            //        throw new System.Exception("This client is not authorized");
-                            //    }
-                            //};
+                                    return Task.CompletedTask;
+                                },
+                                OnAuthenticationFailed = context =>
+                                {
+                                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                                    logger.LogError("Authentication failed: {Message}", context.Exception.Message);
+                                    return Task.CompletedTask;
+                                },
+                                OnChallenge = context =>
+                                {
+                                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                                    logger.LogError("Challenge error: {ErrorDescription}", context.ErrorDescription);
+                                    return Task.CompletedTask;
+                                }
+                            };
                         }, options => { configuration.Bind("AzureAd", options); });
 
                 // The following flag can be used to get more descriptive errors in development environments
@@ -176,8 +187,8 @@ namespace ExpenseTracker
 
                 app.UseRouting();
 
-                //app.UseAuthentication();
-                //app.UseAuthorization();
+                app.UseAuthentication();
+                app.UseAuthorization();
 
 
                 app.MapControllers();
