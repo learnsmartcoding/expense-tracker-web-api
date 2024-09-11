@@ -26,6 +26,13 @@ namespace ExpenseTracker.Web.Controllers
 
             return Ok(claimsDictionary);
         }
+
+        [HttpGet("public-endpoint")]
+        [AllowAnonymous]
+        public IActionResult PublicEndpoint()
+        {
+            return Ok(new { Message = "This endpoint is accessible without authorization." });
+        }
     }
 
 }
